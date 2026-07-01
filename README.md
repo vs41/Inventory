@@ -1,169 +1,231 @@
-# FreshTrack
+FreshTrack – Warehouse Receiving & Inventory Management System
+Project Overview
 
-FreshTrack is a Go, PostgreSQL, Redis, JWT, Docker, HTML/CSS/vanilla JavaScript warehouse receiving system.
+FreshTrack is a production-oriented warehouse receiving and inventory management system built using Go, PostgreSQL, Redis, JWT Authentication, Docker, and a frontend developed with HTML, CSS, and Vanilla JavaScript.
 
-## Features
+The application is designed for organizations that receive inventory across multiple warehouses. It enables warehouse operators to scan incoming products, reconcile received quantities against invoices, and allows administrators to manage warehouses, users, reports, and audit logs from a centralized dashboard.
 
-- Central Admin: login/logout, dashboard, user CRUD/disable, warehouse CRUD, warehouse assignment, CSV/XLSX invoice upload, invoice visibility, reconciliation reports, CSV/Excel downloads, audit logs.
-- Hub User: login/logout, assigned warehouse selection, assigned invoices, barcode scanning, manual increment/decrement, finish receiving, receiving history.
-- Server-side warehouse isolation for hub users.
-- JWT auth with role middleware and expiry.
-- Redis duplicate scan protection and Redis stream backed scan processing.
-- Invoice statuses: `Pending`, `Receiving`, `Completed`.
-- Server-Sent Events for live progress updates.
-- Dark, responsive vanilla frontend with sidebar navigation, tables, search, validation, loading states, toasts, and scan-focused controls.
+The project follows a clean backend architecture using Go while keeping the frontend lightweight without any JavaScript frameworks.
 
-## Requirements
+Technology Stack
+Backend
+Go
+PostgreSQL
+Redis
+JWT Authentication
+Docker & Docker Compose
+Frontend
+HTML
+CSS
+Vanilla JavaScript
+User Roles
+1. Central Admin
 
-- Go 1.22+
-- Docker and Docker Compose
-- PostgreSQL 16
-- Redis 7
+The administrator has complete control over the system and can:
 
-## Installation
+Login and Logout
+View dashboard analytics
+Create, edit and disable users
+Create and manage warehouses
+Assign one or multiple warehouses to hub users
+Upload invoices using CSV or Excel (.xlsx)
+View uploaded invoices
+Generate reconciliation reports
+Download reports in CSV and Excel formats
+View audit logs
+2. Hub User
 
-```bash
+Warehouse users can:
+
+Login and Logout
+Access only assigned warehouses
+Select an assigned warehouse
+View warehouse invoices
+Scan products using barcode scanners
+Perform manual quantity adjustments
+Finish receiving
+View receiving history
+
+Warehouse isolation is enforced on the server, ensuring users cannot access data from warehouses that are not assigned to them.
+
+Major Features
+Authentication
+JWT-based authentication
+Role-based authorization
+Session expiration handling
+Secure password hashing using bcrypt
+Warehouse Management
+Warehouse CRUD
+Multiple warehouse assignment per user
+Warehouse isolation for hub users
+Invoice Management
+
+Supports both:
+
+CSV Upload
+Excel (.xlsx) Upload
+
+Upload validation includes:
+
+Warehouse existence
+Unique invoice IDs
+Positive quantities
+Non-empty SKU validation
+Preventing invoices from spanning multiple warehouses
+Receiving Workflow
+
+Warehouse operators receive inventory using barcode scanners.
+
+Features include:
+
+Barcode scanning
+Manual increment/decrement
+Receiving completion
+Automatic invoice status updates
+
+Invoice lifecycle:
+
+Pending
+
+↓
+
+Receiving
+
+↓
+
+Completed
+
+Redis Integration
+
+Redis is used for two important purposes:
+
+Duplicate Scan Protection
+
+Accidental duplicate barcode scans occurring within milliseconds are prevented using Redis SETNX with expiration.
+
+Scan Queue Processing
+
+Barcode scan events are pushed into Redis Streams and processed asynchronously by a background worker before updating PostgreSQL and writing audit logs.
+
+Real-Time Updates
+
+The application uses Server-Sent Events (SSE) to provide live receiving progress without requiring page refreshes.
+
+Reporting
+
+Administrators can generate reconciliation reports filtered by:
+
+Date
+Warehouse
+Vendor
+Status
+
+Reports can be exported as:
+
+CSV
+Excel
+Audit Logging
+
+Every inventory operation is logged, including:
+
+Timestamp
+User
+Warehouse
+Invoice
+SKU
+Previous quantity
+Updated quantity
+Action performed
+Reason (when applicable)
+Frontend
+
+The UI is built entirely using:
+
+HTML
+CSS
+Vanilla JavaScript
+
+Features include:
+
+Responsive design
+Dark sidebar navigation
+Search
+Pagination
+Sorting
+Client-side validation
+Loading indicators
+Toast notifications
+Warehouse-optimized barcode scanning interface
+Project Structure
+cmd/server              Application entry point
+
+internal/auth           Authentication & JWT
+
+internal/config         Configuration
+
+internal/db             PostgreSQL connection & migrations
+
+internal/handlers       HTTP handlers
+
+internal/middleware     JWT & role middleware
+
+internal/models         Shared models
+
+internal/queue          Redis stream worker
+
+internal/redisclient    Redis configuration
+
+internal/router         Route registration
+
+web                     HTML/CSS/JavaScript frontend
+Running the Project
+Requirements
+Go 1.22+
+Docker
+Docker Compose
+PostgreSQL 16
+Redis 7
+Setup
 cp .env.example .env
 go mod tidy
-```
-
-For local Go execution, `.env.example` uses Postgres on host port `5433` because Docker maps `5433:5432`.
-
-## Running With Docker
-
-```bash
+Start the application
 docker compose up --build
-```
 
-The app is served at `http://localhost:8080`.
+The application will be available at:
 
-Postgres and Redis are also exposed for local development:
+http://localhost:8080
 
-- Postgres: `localhost:5433`
-- Redis: `localhost:6379`
+If running the Go application locally, start only PostgreSQL and Redis:
 
-If you already have a `pgdata` volume from the old schema, recreate it before relying on the new migration:
-
-```bash
-docker compose down -v
-docker compose up --build
-```
-
-## Running Locally
-
-Start dependencies:
-
-```bash
 docker compose up postgres redis
-```
 
-Run the server:
-
-```bash
 go run ./cmd/server
-```
+Testing
 
-Open `http://localhost:8080`.
+Run:
 
-## API
-
-Auth:
-
-- `POST /login` or `POST /api/auth/login`
-- `POST /logout`
-- `GET /me`
-
-Admin:
-
-- `GET /api/dashboard`
-- `GET /api/users`
-- `POST /api/users`
-- `PUT /api/users/{id}`
-- `DELETE /api/users/{id}`
-- `GET /api/warehouses`
-- `POST /api/warehouses`
-- `PUT /api/warehouses/{id}`
-- `DELETE /api/warehouses/{id}`
-- `POST /api/upload`
-- `GET /api/invoices`
-- `GET /api/invoice/{id}`
-- `GET /api/audit`
-- `GET /api/reports`
-- `GET /api/admin/reports/reconciliation?format=csv`
-- `GET /api/admin/reports/reconciliation?format=xlsx`
-- `POST /api/override`
-
-Hub:
-
-- `GET /api/hub-dashboard`
-- `GET /api/hub/warehouses`
-- `GET /api/hub/invoices?warehouse_id=WH-001`
-- `POST /api/scan`
-- `POST /api/manual-increment`
-- `POST /api/manual-decrement`
-- `POST /api/finish-receiving`
-- `GET /api/progress?invoice_id=INV-001`
-- `GET /api/hub/progress/events?invoice_id=INV-001&access_token=JWT`
-- `GET /api/history`
-
-## Invoice Upload Format
-
-CSV and `.xlsx` files must contain these columns in the first sheet:
-
-```text
-Invoice_ID,Vendor_Name,Target_Warehouse_ID,Item_SKU,Item_Name,Expected_Quantity
-```
-
-Validation rejects the whole upload with row numbers when:
-
-- warehouse does not exist
-- invoice id already exists
-- quantity is not greater than 0
-- SKU is empty
-- one invoice appears under multiple warehouses
-
-## Frontend Pages
-
-- `/login.html` and `/index.html`
-- `/admin/dashboard.html`
-- `/admin/users.html`
-- `/admin/warehouses.html`
-- `/admin/upload.html`
-- `/admin/reports.html`
-- `/admin/audit.html`
-- `/hub/dashboard.html`
-- `/hub/invoices.html`
-- `/hub/scan.html`
-- `/hub/history.html`
-
-## Folder Structure
-
-```text
-cmd/server              application entrypoint
-internal/auth           password hashing and JWT
-internal/config         environment config
-internal/db             pgx pool and migrations
-internal/handlers       HTTP handlers
-internal/middleware     JWT and role middleware
-internal/models         shared API models
-internal/queue          Redis stream scan worker
-internal/redisclient    Redis setup
-internal/router         route registration
-web                     vanilla frontend
-```
-
-## Testing
-
-```bash
 go test ./...
 go build ./cmd/server
 docker compose config
-```
+Demonstration
 
-## Screenshots
+After starting the application, the main pages are:
 
-Run the app and open these pages:
+Admin
 
-- Admin dashboard: `http://localhost:8080/admin/dashboard.html`
-- Scan screen: `http://localhost:8080/hub/scan.html`
-# Inventory
+/admin/dashboard.html
+/admin/users.html
+/admin/warehouses.html
+/admin/upload.html
+/admin/reports.html
+/admin/audit.html
+
+Hub
+
+/hub/dashboard.html
+/hub/invoices.html
+/hub/scan.html
+/hub/history.html
+Summary
+
+FreshTrack demonstrates the implementation of a complete warehouse receiving workflow using Go and modern backend practices. The project incorporates secure authentication, warehouse-based authorization, invoice management, barcode-driven receiving, asynchronous processing with Redis Streams, duplicate scan protection, audit logging, reporting, and a responsive frontend built entirely with HTML, CSS, and Vanilla JavaScript.
