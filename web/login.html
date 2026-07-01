@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FreshTrack - Login</title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+<div class="wrap" style="max-width:420px; padding-top:80px;">
+  <div class="card">
+    <h1>FreshTrack</h1>
+    <h2>Inbound Receiving</h2>
+    <form id="loginForm">
+      <label for="email">Email</label>
+      <input id="email" type="email" required autocomplete="username" />
+      <label for="password">Password</label>
+      <input id="password" type="password" required autocomplete="current-password" />
+      <button type="submit">Log In</button>
+      <div class="error" id="err" style="display:none;"></div>
+    </form>
+  </div>
+</div>
+<script src="/js/api.js"></script>
+<script src="/js/login.js"></script>
+</body>
+</html>

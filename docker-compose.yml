@@ -1,0 +1,40 @@
+services:
+  app:
+    build: .
+    container_name: freshtrack-app
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      APP_PORT: 8080
+      DATABASE_URL: postgres://freshtrack:freshtrack@postgres:5432/freshtrack?sslmode=disable
+      REDIS_ADDR: redis:6379
+      JWT_SECRET: change_me_to_a_long_random_string
+      JWT_EXPIRY_HOURS: 12
+    ports:
+      - "8080:8080"
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: freshtrack-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: freshtrack
+      POSTGRES_PASSWORD: freshtrack
+      POSTGRES_DB: freshtrack
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./internal/db/migrations:/docker-entrypoint-initdb.d
+
+  redis:
+    image: redis:7-alpine
+    container_name: freshtrack-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:

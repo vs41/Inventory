@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>FreshTrack - Reports</title><link rel="stylesheet" href="/css/style.css" /></head>
+<body>
+<div class="app"><aside class="sidebar"><div class="brand">FreshTrack</div><nav class="nav"><a href="/admin/dashboard.html">Dashboard</a><a href="/admin/users.html">Users</a><a href="/admin/warehouses.html">Warehouses</a><a href="/admin/user-warehouse-mapping.html">User → Warehouse Mapping</a><a href="/admin/upload.html">Upload</a><a class="active" href="/admin/reports.html">Reports</a><a href="/admin/audit.html">Audit</a></nav></aside>
+<main class="main"><div class="topbar"><strong>Reports</strong><button class="small-btn secondary" onclick="API.logout()">Logout</button></div><div class="content"><section class="card"><div class="toolbar"><input id="from" type="date"><input id="to" type="date"><input id="warehouse" placeholder="Warehouse"><input id="vendor" placeholder="Vendor"><select id="status"><option value="">Any Status</option><option>Pending</option><option>Receiving</option><option>Completed</option></select><button id="filter">Filter</button><button id="csv" class="secondary">CSV</button><button id="excel" class="secondary">Excel</button></div></section><div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Vendor</th><th>Warehouse</th><th>Status</th><th>SKU</th><th>Item</th><th>Expected</th><th>Received</th><th>Variance</th></tr></thead><tbody id="rows"></tbody></table></div></div></main></div>
+<script src="/js/api.js"></script><script src="/js/app.js"></script><script src="/js/admin-reports.js"></script>
+</body></html>

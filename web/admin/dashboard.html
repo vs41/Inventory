@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>FreshTrack - Admin Dashboard</title><link rel="stylesheet" href="/css/style.css" /></head>
+<body>
+<div class="app">
+  <aside class="sidebar"><div class="brand">FreshTrack</div><nav class="nav"><a href="/admin/dashboard.html">Dashboard</a><a href="/admin/users.html">Users</a><a class="active" href="/admin/warehouses.html">Warehouses</a><a href="/admin/user-warehouse-mapping.html">User → Warehouse Mapping</a><a href="/admin/upload.html">Upload</a><a href="/admin/reports.html">Reports</a><a href="/admin/audit.html">Audit</a></nav></aside>
+  <main class="main"><div class="topbar"><strong>Central Admin</strong><button class="small-btn secondary" onclick="API.logout()">Logout</button></div><div class="content"><div class="grid" id="cards"></div><section class="card"><h2>Warehouse Performance</h2><div id="chart" class="grid two"></div></section></div></main>
+</div>
+<script src="/js/api.js"></script><script src="/js/app.js"></script><script src="/js/admin-dashboard.js"></script>
+</body></html>

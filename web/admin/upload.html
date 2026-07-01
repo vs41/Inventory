@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>FreshTrack - Upload</title><link rel="stylesheet" href="/css/style.css" /></head>
+<body>
+<div class="app"><aside class="sidebar"><div class="brand">FreshTrack</div><nav class="nav"><a href="/admin/dashboard.html">Dashboard</a><a href="/admin/users.html">Users</a><a href="/admin/warehouses.html">Warehouses</a><a href="/admin/user-warehouse-mapping.html">User → Warehouse Mapping</a><a class="active" href="/admin/upload.html">Upload</a><a href="/admin/reports.html">Reports</a><a href="/admin/audit.html">Audit</a></nav></aside>
+<main class="main"><div class="topbar"><strong>Invoice Upload</strong><button class="small-btn secondary" onclick="API.logout()">Logout</button></div><div class="content"><section class="card"><h2>Upload CSV or Excel</h2><p class="muted">Invoice_ID, Vendor_Name, Target_Warehouse_ID, Item_SKU, Item_Name, Expected_Quantity</p><input type="file" id="invoiceFile" accept=".csv,.xlsx"><button id="uploadBtn">Upload</button><pre id="result" class="muted"></pre></section></div></main></div>
+<script src="/js/api.js"></script><script src="/js/app.js"></script><script src="/js/admin-upload.js"></script>
+</body></html>

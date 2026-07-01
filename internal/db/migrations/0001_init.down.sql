@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS audit_log;
+DROP TABLE IF EXISTS receiving_ledger;
+DROP TABLE IF EXISTS invoice_lines;
+DROP TABLE IF EXISTS invoices;
+DROP TABLE IF EXISTS user_warehouses;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS warehouses;
